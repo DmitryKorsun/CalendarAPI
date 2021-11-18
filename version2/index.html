@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Календарь</title>
+    <meta charset="utf-8"/>
+</head>
+<body>
+<button id="authorize_button" style="display: none;">Авторизация</button>
+<button id="signout_button" style="display: none;">Выход</button>
+<pre id="content" style="white-space: pre-wrap;"></pre>
+<form name="formDevelopments" style="display: flex;flex-direction: column; align-items: flex-start;"
+      action="javascript:AddEvents()">
+    <label>Заглавие</label>
+    <input name="summary">
+    <label>Адресс</label>
+    <input name="location">
+    <label>О событии</label>
+    <input name="description">
+    <label>Начало события</label>
+    <input type="datetime-local" name="startDateTime" value="2021-11-16T09:00">
+    <label>Конец события</label>
+    <input type="datetime-local" name="endDateTime" value="2021-11-16T09:00">
+    <input name="submit" type="submit">
+</form>
+<div id="LinkAddEvents"></div>
+<script type="text/javascript">
+    //Добавление события
+    function AddEvents() {
+        let formAddEvents = document.forms.formDevelopments;
+        let summary = formAddEvents.elements.summary;
+        let location = formAddEvents.elements.location;
+        let description = formAddEvents.elements.description;
+        let startDateTime = formAddEvents.elements.startDateTime;
+        let endDateTime = formAddEvents.elements.endDateTime;
+        console.log(startDateTime.value, endDateTime.value)
+        let event = {
+            'summary': `${summary.value}`,
+            'location': `${location.value}`,
+            'description': `${description.value}`,
+            'start': {
+                'dateTime': `${startDateTime.value}:00+02:00`,
+                'timeZone': `Europe/Kiev`
+            },
+            'end': {
+                'dateTime': `${endDateTime.value}:00+02:00`,
+                'timeZone': `Europe/Kiev`
+            }
+        };
+
+        var request = gapi.client.calendar.events.insert({
+            'calendarId': 'primary',
+            'resource': event
+        });
+
+        request.execute(function (event) {
+            let LinkAddEvents = document.getElementById('LinkAddEvents');
+            let LinkAddEventsCreate = document.createElement('a');
+            LinkAddEventsCreate.href = `${event.htmlLink}`;
+            LinkAddEventsCreate.appendChild(document.createTextNode(`${event.htmlLink}`));
+            LinkAddEvents.appendChild(LinkAddEventsCreate);
+        });
+    }
+</script>
+<script src="./JS/homework_js_10.js"></script>
+<script async defer src="https://apis.google.com/js/api.js"
+        onload="this.onload=function(){};ClientLoad()"
+        onreadystatechange="if (this.readyState === 'complete') this.onload()">
+</script>
+</body>
+</html>
